@@ -1,0 +1,71 @@
+<!doctype html>
+<html ng-app="demo">
+	<head>
+	<!--
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	-->
+		<script src="angular.min.js"></script>
+		<script>
+			var app = angular.module('demo',[]);
+            app.controller('HelloRest', function($scope,$http){
+					$http.get('http://localhost:8080/sportfolio-webapp/greeting').
+							then(function(response){
+								$scope.greeting = response.data;
+                                
+                        $scope.performCall = function(){
+                                    $http({
+                                        method: 'GET',
+                                        url: 'http://localhost:8080/sportfolio-webapp/userslist'
+                                    //}).then(function errorCallback(response){
+                                        //called asynchronously if an error occurs or server
+                                        //returns response with an error status
+                                    }).then(function(response){
+                                        console.log('userslist full data received from REST:\n')
+                                        console.log(response.data);
+                                        $scope.lista = response.data;
+                                        $scope.onename = response.data[0].name;
+                                    })
+                                }
+							});
+                        $scope.showPortfolio = function(){
+                            $http.get('http://localhost:8080/sportfolio-webapp/'+$scope.selectedName.id).then(function(response){
+                                $scope.portfolio = response.data;
+                            });
+                        }
+                        $scope.orderByMe = function(x){$scope.myOrderBy=x;}
+				});
+            
+		</script>
+	</head>
+	<body>
+		<div ng-controller="HelloRest">
+			<p>The ID is {{greeting.id}}</p>
+			<p>The content is {{greeting.content}}</p>
+            <br />
+            <input type="button" ng-click="performCall()"/>
+            <p>{{lista}}</p>
+            <p>imie: {{lista[0].name}}</p>
+            <table>
+                <tr ng-repeat="x in lista">
+                    <td>{{x.name}}</td>
+                </tr>
+            </table>
+            <select ng-model="selectedName" ng-options="x.name for x in lista" ng-change="showPortfolio()">   
+            </select>
+            <p>You selected: {{selectedName.name}}</p>
+            <p>your portfolio: {{portfolio}}</p>
+            <table>
+                <tr>
+                    <th ng-click="orderByMe('ticker')">Ticker</th>
+                    <th ng-click="orderByMe('price')">Price</th>
+                    <th ng-click="orderByMe('change')">Change</th>
+                </tr>
+                <tr ng-repeat="x in portfolio | orderBy:myOrderBy">
+                    <td>{{x.ticker}}</td>
+                    <td>{{x.price}}</td>
+                    <td>{{x.changep}}</td>
+                </tr>
+            </table>
+		</div>
+	</body>
+</html>
