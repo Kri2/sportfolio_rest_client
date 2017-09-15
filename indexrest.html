@@ -29,6 +29,7 @@
 							});
                         $scope.showPortfolio = function(){
                             $http.get('http://localhost:8080/sportfolio-webapp/'+$scope.selectedName.id).then(function(response){
+                                console.log(response.data);
                                 $scope.portfolio = response.data;
                             });
                         }
@@ -39,21 +40,28 @@
 	</head>
 	<body>
 		<div ng-controller="HelloRest">
+            
 			<p>The ID is {{greeting.id}}</p>
 			<p>The content is {{greeting.content}}</p>
             <br />
             <input type="button" ng-click="performCall()"/>
-            <p>{{lista}}</p>
-            <p>imie: {{lista[0].name}}</p>
+            <p>First person's name: {{lista[0].name}} (means that data was loaded correctly)</p>
+            
+            <!-- shows list of all users available to choose from, used for debug
             <table>
                 <tr ng-repeat="x in lista">
                     <td>{{x.name}}</td>
                 </tr>
             </table>
+            -->
+            
+            <!-- generate dropdown list out of users list -->
             <select ng-model="selectedName" ng-options="x.name for x in lista" ng-change="showPortfolio()">   
             </select>
             <p>You selected: {{selectedName.name}}</p>
-            <p>your portfolio: {{portfolio}}</p>
+            
+            <!-- create table with portfolio data for the selected user, can be sorted by click on column title -->
+            <p>your portfolio:</p>
             <table>
                 <tr>
                     <th ng-click="orderByMe('ticker')">Ticker</th>
@@ -66,6 +74,7 @@
                     <td>{{x.changep}}</td>
                 </tr>
             </table>
+            
 		</div>
 	</body>
 </html>
